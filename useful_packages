@@ -25,5 +25,8 @@ docker-ce-cli
 containerd.io
 conky
 silversearcher-ag
-
-
+ripgrep
+fd-find
+locate
+fonts-firacode
+fonts-nanum

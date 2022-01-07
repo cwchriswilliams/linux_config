@@ -10,4 +10,5 @@ ln -s $(readlink -f conky/conky.conf) ~/.config/conky/conky.conf
 ln -s $(readlink -f alacritty/alacritty.yml) ~/.config/alacritty/alacritty.yml
 ln -s $(readlink -f rofi/config) ~/.config/rofi/config
 ln -s $(readlink -f gdb/.gdbinit) ~/.gdbinit
+ln -s $(readlink -f emacs/.spacemacs) ~/.spacemacs
 

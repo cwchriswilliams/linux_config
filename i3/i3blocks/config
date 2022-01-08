@@ -1,0 +1,74 @@
+
+
+command=/usr/share/i3blocks/$BLOCK_NAME
+separator_block_width=15
+markup=none
+
+
+[volume]
+label=
+instance=Master
+interval=once
+signal=10
+
+[audio-output]
+full_text=SomeText
+command=/home/chris/D/I/linux_config/i3/i3blocks/switch-audio-output.sh $BLOCK_Y
+interval=once
+
+[ip]
+command= echo \[$(hostname -I | cut -d ' ' -f1)\] $(hostname)@$(whoami)
+interval=once
+color=#91E78B
+
+[disk]
+label=HOME
+interval=30
+separator=false
+
+[memory]
+label=MEM
+separator=false
+interval=30
+
+[cpu_usage]
+label=CPU
+interval=10
+min_width=CPU: 100.00%
+
+[keyindicator]
+instance=CAPS
+interval=once
+signal=11
+
+[keyindicator]
+instance=NUM
+interval=once
+signal=11
+
+[monitorindicator]
+label=
+command=cat /tmp/monitor_mode.dat 2>/dev/null
+signal=12
+
+[wifi]
+instance=wlp2s0
+interval=10
+label=
+separator=false
+
+[ssid]
+instance=wlp2s0
+interval=30
+command=iw dev wlp2s0 link |grep SSID|cut -d " " -f2
+color=#FFFF00
+
+[battery]
+label=⚡
+#instance=1
+interval=30
+
+[time]
+command=date '+%Y-%m-%d %H:%M:%S'
+interval=5
+

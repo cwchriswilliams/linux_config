@@ -244,3 +244,4 @@ exec --no-startup-id conky -p 10
 for_window [all] title_window_icon padding 5px
 
 default_border pixel 3px
+default_floating_border normal

@@ -233,7 +233,7 @@ bar {
 }
 
 
-client.focused          $green $green $darkgray $purple $darkgray
+client.focused          $green $green $darkgray $purple $aqua
 client.focused_inactive $darkgray $darkgray $yellow $purple $darkgray
 client.unfocused        $darkgray $darkgray $yellow $purple $darkgray
 client.urgent           $red $red $white $red $red
@@ -242,3 +242,5 @@ exec --no-startup-id feh --bg-fill ~/Pictures/wallpaper.jpg
 exec --no-startup-id conky -p 10
 
 for_window [all] title_window_icon padding 5px
+
+default_border pixel 3px

@@ -12,4 +12,4 @@ ln -s $(readlink -f rofi/config) ~/.config/rofi/config
 ln -s $(readlink -f gdb/.gdbinit) ~/.gdbinit
 ln -s $(readlink -f emacs/.spacemacs) ~/.spacemacs
 ln -s $(readlink -f i3/i3blocks/config) ~/.config/i3blocks/config
-
+ln -s $(readlink -f i3/app-icons.json) ~/.config/i3/app-icons.json

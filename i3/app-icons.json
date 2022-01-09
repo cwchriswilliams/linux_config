@@ -1,0 +1,10 @@
+{
+    "firefox": "firefox",
+    "chromium-browser": "chrome",
+    "chrome": "chrome",
+    "google-chrome": "chrome",
+    "brave-browser": "internet-explorer",
+    "alacritty": "terminal",
+    "emacs": "code",
+    "slack": "slack"
+}

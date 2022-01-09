@@ -1,6 +1,7 @@
 neovim
 neofetch
 python3
+python3-pip
 zsh
 fonts-fontawesome
 wget

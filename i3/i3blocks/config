@@ -4,17 +4,16 @@ command=/usr/share/i3blocks/$BLOCK_NAME
 separator_block_width=15
 markup=none
 
+[audio-output]
+full_text=SomeText
+command=/home/chris/D/I/linux_config/i3/i3blocks/switch-audio-output.sh $BLOCK_Y
+interval=once
 
 [volume]
 label=
 instance=Master
 interval=once
 signal=10
-
-[audio-output]
-full_text=SomeText
-command=/home/chris/D/I/linux_config/i3/i3blocks/switch-audio-output.sh $BLOCK_Y
-interval=once
 
 [ip]
 command= echo \[$(hostname -I | cut -d ' ' -f1)\] $(hostname)@$(whoami)

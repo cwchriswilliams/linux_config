@@ -35,7 +35,7 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
 
 # Workspace name daemon startup - Remember to update the switch workspace shortcuts
-exec_always --no-startup-id exec i3-workspace-names-daemon
+exec_always --no-startup-id exec i3-workspace-names-daemon --uniq
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status

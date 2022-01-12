@@ -51,7 +51,8 @@ This function should only modify configuration layer settings."
               cider-result-overlay-position 'at-point ;; results shown right after expression
               cider-overlays-use-font-lock t
               cider-repl-buffer-size-limit 100
-              clojure-enable-linters  'clj-kondo)
+              clojure-enable-linters  'clj-kondo
+              clojure-enable-clj-refactor t)
      ;; better-defaults
      emacs-lisp
      (ranger :variables

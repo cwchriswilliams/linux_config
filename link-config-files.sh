@@ -10,6 +10,9 @@ ln -s $(readlink -f conky/conky.conf) ~/.config/conky/conky.conf
 ln -s $(readlink -f alacritty/alacritty.yml) ~/.config/alacritty/alacritty.yml
 ln -s $(readlink -f rofi/config) ~/.config/rofi/config
 ln -s $(readlink -f gdb/.gdbinit) ~/.gdbinit
-ln -s $(readlink -f emacs/.spacemacs) ~/.spacemacs
+# Not currently using spacemacs
+# ln -s $(readlink -f emacs/.spacemacs) ~/.spacemacs
+ln -s $(readlink -f emacs/raw/init.el) ~/.emacs.d/init.el
+ln -s $(readlink -f emacs/raw/post-init.el) ~/.emacs.d/post-init.el
 ln -s $(readlink -f i3/i3blocks/config) ~/.config/i3blocks/config
 ln -s $(readlink -f i3/app-icons.json) ~/.config/i3/app-icons.json

@@ -89,8 +89,10 @@
   :demand
   :config
   (general-create-definer personal/leader-keys
+    :states '(normal visual insert motion)
     :prefix "C-SPC")
   (general-create-definer personal/major-mode-leader-keys
+    :states '(normal visual insert motion)
     :prefix "C-,")
   )
 
@@ -103,86 +105,98 @@
 (use-package paredit
   :hook (prog-mode . enable-paredit-mode))
 
-(use-package aggressive-indent
-  :hook 'clojure-mode 'aggressive-indent-mode)
+
+;; (use-package aggressive-indent
+;;   :hook 'clojure-mode 'aggressive-indent-mode)
 
 ;; TODO: Need to change the debug bindings. They conflict with evil and my bindings
 
 (use-package clojure-mode
-  :config (general-define-key "M-RET" 'clojure-refactor-map
-			      "M-RET n" '(:ignore t :which-key "namespace")
-			      "M-RET s" '(:ignore t :which-key "slurp-let"))
+  :config (general-define-key
+	   :states '(normal visual insert motion)
+	   "M-RET" 'clojure-refactor-map
+	   "M-RET n" '(:ignore t :which-key "namespace")
+	   "M-RET s" '(:ignore t :which-key "slurp-let"))
   (personal/leader-keys
     "a" 'clojure-align
-    )
+    ))
 
-  (use-package company
-    :demand
-    :config (global-company-mode))
+(defun setup-clj-refactor-keys ()
+  (general-define-key
+   :states '(normal visual insert motion)
+   "M-RET ra" '(:ignore t :which-key "add")
+   "M-RET rc" '(:ignore t :which-key "cycle")
+   "M-RET rd" '(:ignore t :which-key "destructure")
+   "M-RET re" '(:ignore t :which-key "extract/expand")
+   "M-RET rf" '(:ignore t :which-key "function")
+   "M-RET rh" '(:ignore t :which-key "hydra/hotload")
+   "M-RET ri" '(:ignore t :which-key "introduce/inline")
+   "M-RET rm" '(:ignore t :which-key "move")
+   "M-RET rp" '(:ignore t :which-key "project/promote")
+   "M-RET rr" '(:ignore t :which-key "rename/remove")
+   "M-RET rs" '(:ignore t :which-key "sort/stop deps")
+   "M-RET rt" '(:ignore t :which-key "thread")
+   "M-RET ru" '(:ignore t :which-key "unwind"))
+  )
 
-  (use-package flycheck)
+(use-package clj-refactor
+  :hook ((clojure-mode . clj-refactor-mode)
+	 (clojurec-mode . clj-refactor-mode)
+	 (clojurescript-mode . clj-refactor-mode)
+	 )
+  :config
+  (cljr-add-keybindings-with-prefix "M-RET r")
+  (setup-clj-refactor-keys))
 
-  (use-package treemacs)
-  (use-package treemacs-evil)
-  (use-package treemacs-projectile)
-  (use-package treemacs-magit)
+(use-package company
+  :demand
+  :config (global-company-mode))
 
-  (use-package lsp-treemacs)
+(use-package flycheck)
 
-  (use-package lsp-mode
-    :hook ((clojure-mode . lsp)
-	   (clojurec-mode . lsp)
-	   (clojurescript-mode . lsp)
-	   (lsp-mode . lsp-enable-which-key-integration))
-    :init (setq auto-add-ns-to-new-files? 0) ;; We'll get this from clj-refactor
-    :config
-    (setq lsp-lens-enable t
-	  company-minimum-prefix-length 1))
+(use-package treemacs)
+(use-package treemacs-projectile)
+(use-package treemacs-magit)
 
-  (use-package lsp-ui
-    :commands ls-ui-mode)
+(use-package lsp-treemacs)
 
-  (use-package lsp-ivy
-    :after (lsp-mode ivy))
+(use-package lsp-mode
+  :hook ((clojure-mode . lsp)
+	 (clojurec-mode . lsp)
+	 (clojurescript-mode . lsp)
+	 (lsp-mode . lsp-enable-which-key-integration))
+  :init (setq auto-add-ns-to-new-files? 0) ;; We'll get this from clj-refactor
+  :config
+  (setq lsp-lens-enable t
+	company-minimum-prefix-length 1))
 
-  (use-package dap-mode
-    :after (lsp-mode))
+(use-package lsp-ui
+  :commands ls-ui-mode)
 
-  (use-package clj-refactor
-    :after (clojure-mode)
-    :config (progn (clj-refactor-mode)
-		   (cljr-add-keybindings-with-prefix "M-RET r")
-		   (general-define-key "M-RET ra" '(:ignore t :which-key "add")
-				       "M-RET rc" '(:ignore t :which-key "cycle")
-				       "M-RET rd" '(:ignore t :which-key "destructure")
-				       "M-RET re" '(:ignore t :which-key "extract/expand")
-				       "M-RET rf" '(:ignore t :which-key "function")
-				       "M-RET rh" '(:ignore t :which-key "hydra/hotload")
-				       "M-RET ri" '(:ignore t :which-key "introduce/inline")
-				       "M-RET rm" '(:ignore t :which-key "move")
-				       "M-RET rp" '(:ignore t :which-key "project/promote")
-				       "M-RET rr" '(:ignore t :which-key "rename/remove")
-				       "M-RET rs" '(:ignore t :which-key "sort/stop deps")
-				       "M-RET rt" '(:ignore t :which-key "thread")
-				       "M-RET ru" '(:ignore t :which-key "unwind"))))
+(use-package lsp-ivy
+  :after (lsp-mode ivy))
 
-  (use-package yasnippet
-    :config (yas-global-mode 1))
+(use-package dap-mode
+  :after (lsp-mode))
 
-  (use-package clojure-snippets
-    :after (clojure-mode yassnippet)
-    :config (personal/leader-keys
-	      "i" 'ivy-yasnippet))
+(use-package yasnippet
+  :config (yas-global-mode 1))
 
-  (use-package dash
-    :after yasnippet)
+(use-package clojure-snippets
+  :after (clojure-mode yassnippet)
+  :config (personal/leader-keys
+	    "i" 'ivy-yasnippet))
 
-  (use-package ivy-yasnippet
-    :after yasnippet dash
-    :config 'ivy-yasnippet)
+(use-package dash
+  :after yasnippet)
+
+(use-package ivy-yasnippet
+  :after yasnippet dash
+  :config 'ivy-yasnippet)
 
   ;; TODO: https://docs.cider.mx/cider/usage/misc_features.html Xref
-  (use-package cider
+
+(use-package cider
   :commands (cider cider-connect cider-jack-in)
   :custom (clojure-eval-toplevel-inside-comment-form t)
   :config
@@ -213,7 +227,9 @@
     "fr" 'cider-format-region
     "fb" 'cider-format-buffer)
   (add-hook 'before-save-hook 'cider-format-buffer t t)
-  (general-define-key "C-RET" 'cider-eval-defun-at-point)))
+  (general-define-key
+   :states '(normal visual insert motion)
+   "C-RET" 'cider-eval-defun-at-point))
 
 (use-package evil
   :init (setq evil-want-keybinding nil)
@@ -222,8 +238,10 @@
 
 (use-package evil-collection
   :after evil
+  :init (setq evil-want-keybinding nil)
   :config (evil-collection-init))
 
+(use-package treemacs-evil)
 (use-package projectile
   :demand
   :bind-keymap ("C-c p" . projectile-command-map)
@@ -321,36 +339,37 @@
 
 
 (personal/leader-keys
-    "p" 'projectile-command-map
-    "ps" '(:ignore t :which-key "search")
-    "ps" '(:ignore t :which-key "execute")
-    "pO" '(:ignore t :which-key "org-mode")
+  :states '(motion normal insert visual)
+  "A" '(:ignore t :which-key "appearance")
+  "Az" '(hydra-text-scale/body :which-key "zoom")
 
-    "f" '(:ignore t :which-key "files")
-    "fr" 'counsel-buffer-or-recentf
+  "p" 'projectile-command-map
+  "ps" '(:ignore t :which-key "search")
+  "ps" '(:ignore t :which-key "execute")
+  "pO" '(:ignore t :which-key "org-mode")
 
-    "g" '(:ignore t :which-key "git")
-    "gs" 'magit-status
-    "gt" 'git-timemachine
-    "gm" 'git-messenger:popup-message
-    "ga" '(hydra-smeargle/body :which-key "show-age")
+  "f" '(:ignore t :which-key "files")
+  "fr" 'counsel-buffer-or-recentf
 
-    "a" '(:ignore t :which-key "appearance")
-    "az" '(hydra-text-scale/body :which-key "zoom")
+  "g" '(:ignore t :which-key "git")
+  "gs" 'magit-status
+  "gt" 'git-timemachine
+  "gm" 'git-messenger:popup-message
+  "ga" '(hydra-smeargle/body :which-key "show-age")
 
-    "b" '(:ignore t :which-key "buffer")
-    "bm" '(hydra-move-lines/body :which-key "move-lines")
+  "b" '(:ignore t :which-key "buffer")
+  "bm" '(hydra-move-lines/body :which-key "move-lines")
 
-    "d" '(:ignore t :which-key "dir-locals")
-    "de" '(projectile-edit-dir-locals)
-    "dl" '(hack-dir-local-variables)
-    )
+  "d" '(:ignore t :which-key "dir-locals")
+  "de" '(projectile-edit-dir-locals)
+  "dl" '(hack-dir-local-variables)
+  )
 
-(general-add-hook '(clojure-mode-hook
-		    clojurescript-mode-hook
-		    clojurec-mode-hook)
-		  '((general-define-key "M-RET" 'clojure-refactor-map
-					"M-RET n" '(:ignore t :which-key "namespace"))))
+;; (general-add-hook '(clj-refactor-mode-hook)
+;; 		  '((general-define-key
+;; 		     :states '(normal visual insert motion)
+;; 		     "M-RET" 'clojure-refactor-map
+;; 		     "M-RET n" '(:ignore t :which-key "namespace"))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

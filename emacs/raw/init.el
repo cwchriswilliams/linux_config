@@ -198,7 +198,9 @@
 
 (use-package cider
   :commands (cider cider-connect cider-jack-in)
-  :custom (clojure-eval-toplevel-inside-comment-form t)
+  :custom
+  (cider-eval-toplevel-inside-comment-form t)
+  (clojure-eval-toplevel-inside-comment-form t)
   :config
   (personal/leader-keys
     "'" '(:ignore t :which-key "cider")
@@ -249,6 +251,12 @@
 	  (setq projectile-project-search-path '("~/D/I")))
   :config
   (projectile-mode +1))
+
+(use-package ripgrep
+  :demand)
+
+(use-package projectile-ripgrep
+  :after projectile)
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode t))
@@ -335,6 +343,7 @@
    "C-S-x" 'clipboard-kill-region
    "C-s" 'save-buffer
    "C-f" 'swiper
+   "C-S-f" 'projectile-ripgrep
    "C-<tab>" 'switch-to-buffer)
 
 
@@ -377,7 +386,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(treemacs-magit treemacs-projectile treemacs-evil org-bullets ivy-cider aggressive-indent ivy-yasnippet magit-todos smeargle git-messenger forge counsel-projectile evil-collection evil general helpful ivy-rich lsp-ui clojure-snippets yassnippet clojure-lsp dap-clojure dap-mode lsp-ivy doom-modeline which-key use-package undo-tree rainbow-delimiters persp-projectile mark-multiple magit lsp-treemacs key-chord helm gruvbox-theme flycheck eyebrowse expand-region diminish counsel company clj-refactor ace-jump-mode)))
+   '(projectile-ripgrep treemacs-magit treemacs-projectile treemacs-evil org-bullets ivy-cider aggressive-indent ivy-yasnippet magit-todos smeargle git-messenger forge counsel-projectile evil-collection evil general helpful ivy-rich lsp-ui clojure-snippets yassnippet clojure-lsp dap-clojure dap-mode lsp-ivy doom-modeline which-key use-package undo-tree rainbow-delimiters persp-projectile mark-multiple magit lsp-treemacs key-chord helm gruvbox-theme flycheck eyebrowse expand-region diminish counsel company clj-refactor ace-jump-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

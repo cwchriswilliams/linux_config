@@ -15,6 +15,8 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package diminish)
+
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -30,14 +32,11 @@
 	  (lambda ()
 	    (add-hook 'before-save-hook 'delete-trailing-whitespace)))
 
-(dolist (mode '(org-mode-hook
-		term-mode-hook
+(dolist (mode '(term-mode-hook
 		shell-mode-hook
 		eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-
-;; Setup the backup settings
 (setq backup-by-copying t
       backup-directory-alist
       '(("." . "~/.emacs-backups/"))
@@ -45,8 +44,6 @@
       kept-new-versions 6
       kept-old-versions 2
       version-control t)
-
-(use-package diminish)
 
 (use-package avy
   :bind (("C-'" . avy-goto-char-timer)))
@@ -74,11 +71,15 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+(use-package gruvbox-theme
+	     :config (load-theme 'gruvbox-dark-medium t))
+
+
 (use-package all-the-icons
   :if (display-graphic-p))
 
-(use-package gruvbox-theme
-	     :config (load-theme 'gruvbox-dark-medium t))
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
 
 (use-package which-key
   :diminish
@@ -96,8 +97,19 @@
     :prefix "C-,")
   )
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1))
+(use-package treemacs)
+
+(use-package evil
+  :init (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
+
+(use-package evil-collection
+  :after evil
+  :init (setq evil-want-keybinding nil)
+  :config (evil-collection-init))
+
+(use-package treemacs-evil)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -105,11 +117,95 @@
 (use-package paredit
   :hook (prog-mode . enable-paredit-mode))
 
+(use-package company
+  :demand
+  :config (global-company-mode))
 
-;; (use-package aggressive-indent
-;;   :hook 'clojure-mode 'aggressive-indent-mode)
+(use-package flycheck)
 
-;; TODO: Need to change the debug bindings. They conflict with evil and my bindings
+(use-package projectile
+  :demand
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init (when (file-directory-p "~/D/I")
+	  (setq projectile-project-search-path '("~/D/I")))
+  :config
+  (projectile-mode +1))
+
+(use-package ripgrep
+  :demand)
+
+(use-package projectile-ripgrep
+  :after projectile)
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode t))
+
+(use-package treemacs-projectile)
+
+(use-package magit
+  :config (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+
+(use-package treemacs-magit)
+
+(use-package forge
+  :after magit)
+
+(use-package magit-gitflow
+  :hook 'magit-mode-hook (turn-on-magit-gitflow))
+
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode t))
+
+(use-package git-timemachine
+  :commands (git-timemachine-toggle))
+
+(use-package git-messenger
+  :commands (git-messenger:popup-message))
+
+(use-package smeargle)
+
+(use-package org
+  :custom (org-ellipsis " ➤")
+  (org-log-done 'time)
+  (org-agenda-start-with-log-mode t)
+  (org-agenda-files
+	   '("~/Documents/org-mode/agenda/birthdays.org")))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode))
+
+(use-package lsp-mode
+  :hook ((clojure-mode . lsp)
+	 (clojurec-mode . lsp)
+	 (clojurescript-mode . lsp)
+	 (lsp-mode . lsp-enable-which-key-integration))
+  :init (setq auto-add-ns-to-new-files? 0) ;; We'll get this from clj-refactor
+  :config
+  (setq lsp-lens-enable t
+	company-minimum-prefix-length 1))
+
+(use-package lsp-treemacs)
+
+(use-package lsp-ui
+  :commands ls-ui-mode)
+
+(use-package lsp-ivy
+  :after (lsp-mode ivy))
+
+(use-package dap-mode
+  :after (lsp-mode))
+
+(use-package yasnippet
+  :config (yas-global-mode 1))
+
+(use-package dash
+    :after yasnippet)
+
+(use-package ivy-yasnippet
+  :after yasnippet dash
+  :config 'ivy-yasnippet)
 
 (use-package clojure-mode
   :config (general-define-key
@@ -148,53 +244,10 @@
   (cljr-add-keybindings-with-prefix "M-RET r")
   (setup-clj-refactor-keys))
 
-(use-package company
-  :demand
-  :config (global-company-mode))
-
-(use-package flycheck)
-
-(use-package treemacs)
-(use-package treemacs-projectile)
-(use-package treemacs-magit)
-
-(use-package lsp-treemacs)
-
-(use-package lsp-mode
-  :hook ((clojure-mode . lsp)
-	 (clojurec-mode . lsp)
-	 (clojurescript-mode . lsp)
-	 (lsp-mode . lsp-enable-which-key-integration))
-  :init (setq auto-add-ns-to-new-files? 0) ;; We'll get this from clj-refactor
-  :config
-  (setq lsp-lens-enable t
-	company-minimum-prefix-length 1))
-
-(use-package lsp-ui
-  :commands ls-ui-mode)
-
-(use-package lsp-ivy
-  :after (lsp-mode ivy))
-
-(use-package dap-mode
-  :after (lsp-mode))
-
-(use-package yasnippet
-  :config (yas-global-mode 1))
-
 (use-package clojure-snippets
   :after (clojure-mode yassnippet)
   :config (personal/leader-keys
 	    "i" 'ivy-yasnippet))
-
-(use-package dash
-  :after yasnippet)
-
-(use-package ivy-yasnippet
-  :after yasnippet dash
-  :config 'ivy-yasnippet)
-
-  ;; TODO: https://docs.cider.mx/cider/usage/misc_features.html Xref
 
 (use-package cider
   :commands (cider cider-connect cider-jack-in)
@@ -233,66 +286,6 @@
    :states '(normal visual insert motion)
    "C-RET" 'cider-eval-defun-at-point))
 
-(use-package evil
-  :init (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1))
-
-(use-package evil-collection
-  :after evil
-  :init (setq evil-want-keybinding nil)
-  :config (evil-collection-init))
-
-(use-package treemacs-evil)
-(use-package projectile
-  :demand
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :init (when (file-directory-p "~/D/I")
-	  (setq projectile-project-search-path '("~/D/I")))
-  :config
-  (projectile-mode +1))
-
-(use-package ripgrep
-  :demand)
-
-(use-package projectile-ripgrep
-  :after projectile)
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode t))
-
-(use-package magit
-  :config (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-
-(use-package forge
-  :after magit)
-
-(use-package magit-gitflow
-  :hook 'magit-mode-hook (turn-on-magit-gitflow))
-
-(use-package git-timemachine
-  :commands (git-timemachine-toggle))
-
-(use-package git-messenger
-  :commands (git-messenger:popup-message))
-
-(use-package smeargle)
-
-(use-package magit-todos
-  :after magit
-  :config (magit-todos-mode t))
-
-(use-package org
-  :custom (org-ellipsis " ➤")
-  (org-log-done 'time)
-  (org-agenda-start-with-log-mode t)
-  (org-agenda-files
-	   '("~/Documents/org-mode/agenda/birthdays.org")))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode))
-
 (use-package hydra
   :config
   (defhydra hydra-text-scale (:timeout 15)
@@ -330,8 +323,6 @@
     ("j" (move-line-down) "Move down")
     ("k" (move-line-up) "Move up")
     ("f" nil "finish" :exit t)))
-
-
 
 (general-unbind "C-SPC") ; This is normally mark, but we're evil now
 (general-define-key
@@ -374,22 +365,10 @@
   "dl" '(hack-dir-local-variables)
   )
 
-;; (general-add-hook '(clj-refactor-mode-hook)
-;; 		  '((general-define-key
-;; 		     :states '(normal visual insert motion)
-;; 		     "M-RET" 'clojure-refactor-map
-;; 		     "M-RET n" '(:ignore t :which-key "namespace"))))
+(defun cwchriswilliams/org-babel-auto-tangle()
+  (when (string-equal (buffer-file-name)
+		      (expand-file-name "~/D/I/linux_config/emacs/raw/init.org"))
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(projectile-ripgrep treemacs-magit treemacs-projectile treemacs-evil org-bullets ivy-cider aggressive-indent ivy-yasnippet magit-todos smeargle git-messenger forge counsel-projectile evil-collection evil general helpful ivy-rich lsp-ui clojure-snippets yassnippet clojure-lsp dap-clojure dap-mode lsp-ivy doom-modeline which-key use-package undo-tree rainbow-delimiters persp-projectile mark-multiple magit lsp-treemacs key-chord helm gruvbox-theme flycheck eyebrowse expand-region diminish counsel company clj-refactor ace-jump-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'cwchriswilliams/org-babel-auto-tangle)))
